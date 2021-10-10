@@ -12,6 +12,11 @@ message Message{
     // message body
     string roomName = 1;
     string text = 2;
+    double size = 3;
+    double speed = 4;
+    int32 colorR = 5;
+    int32 colorG = 6;
+    int32 colorB = 7;
 }
 
 service ChatService {

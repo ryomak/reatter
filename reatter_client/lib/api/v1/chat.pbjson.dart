@@ -14,8 +14,13 @@ const Message$json = const {
   '2': const [
     const {'1': 'roomName', '3': 1, '4': 1, '5': 9, '10': 'roomName'},
     const {'1': 'text', '3': 2, '4': 1, '5': 9, '10': 'text'},
+    const {'1': 'size', '3': 3, '4': 1, '5': 1, '10': 'size'},
+    const {'1': 'speed', '3': 4, '4': 1, '5': 1, '10': 'speed'},
+    const {'1': 'colorR', '3': 5, '4': 1, '5': 5, '10': 'colorR'},
+    const {'1': 'colorG', '3': 6, '4': 1, '5': 5, '10': 'colorG'},
+    const {'1': 'colorB', '3': 7, '4': 1, '5': 5, '10': 'colorB'},
   ],
 };
 
 /// Descriptor for `Message`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List messageDescriptor = $convert.base64Decode('CgdNZXNzYWdlEhoKCHJvb21OYW1lGAEgASgJUghyb29tTmFtZRISCgR0ZXh0GAIgASgJUgR0ZXh0');
+final $typed_data.Uint8List messageDescriptor = $convert.base64Decode('CgdNZXNzYWdlEhoKCHJvb21OYW1lGAEgASgJUghyb29tTmFtZRISCgR0ZXh0GAIgASgJUgR0ZXh0EhIKBHNpemUYAyABKAFSBHNpemUSFAoFc3BlZWQYBCABKAFSBXNwZWVkEhYKBmNvbG9yUhgFIAEoBVIGY29sb3JSEhYKBmNvbG9yRxgGIAEoBVIGY29sb3JHEhYKBmNvbG9yQhgHIAEoBVIGY29sb3JC');

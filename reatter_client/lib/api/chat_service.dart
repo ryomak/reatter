@@ -1,7 +1,6 @@
 import 'package:grpc/grpc.dart';
 
 import 'package:reatter/model/message.dart';
-import 'package:flutter/material.dart';
 
 import 'v1/chat.pbgrpc.dart' as grpc;
 import 'v1/google/protobuf/wrappers.pb.dart';
@@ -10,7 +9,7 @@ import 'v1/google/protobuf/wrappers.pb.dart';
 
 /// CHANGE TO IP ADDRESS OF YOUR SERVER IF IT IS NECESSARY
 const serverIP = "localhost";
-const serverPort = 3000;
+const serverPort = 8080;
 
 /// ChatService client implementation
 class ChatService {
@@ -35,7 +34,15 @@ class ChatService {
   /// Send message to the server
   void send(Message message){
     grpc.ChatServiceClient(client)
-        .send(grpc.Message(roomName: message.roomName, text: message.text));
+        .send(grpc.Message(
+          roomName: message.roomName,
+          text: message.text,
+          size: message.size,
+          speed: message.speed,
+          colorR: message.colorR,
+          colorG: message.colorG,
+          colorB: message.colorB,
+    ));
   }
 
   Stream<Message> receive() async* {
@@ -43,7 +50,15 @@ class ChatService {
     request.value = roomName;
     var stream = grpc.ChatServiceClient(client).subscribe(request);
     await for (var msg in stream) {
-      yield Message(roomName: msg.roomName, text: msg.text);
+      yield Message(
+          roomName: msg.roomName,
+          text: msg.text,
+          speed: msg.speed,
+          size: msg.size,
+          colorR: msg.colorR,
+          colorG: msg.colorG,
+          colorB: msg.colorB,
+      );
     }
   }
 }

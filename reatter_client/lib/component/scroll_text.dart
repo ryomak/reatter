@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 class ScrollingText extends StatefulWidget {
   final String text;
   final TextStyle textStyle;
-  final Axis scrollAxis;
-  final double ratioOfBlankToScreen;
+  final double top;
+  final double speed;
 
   ScrollingText({
     @required this.text,
     this.textStyle,
-    this.scrollAxis: Axis.horizontal,
-    this.ratioOfBlankToScreen: 0.25,
+    this.top : 0.5,
+    this.speed : 1.0,
   }) : assert(text != null);
 
   @override
@@ -28,7 +28,7 @@ class ScrollingTextState extends State<ScrollingText>
   double screenHeight;
   double position = 0.0;
   Timer timer;
-  final double _moveDistance = 3.0;
+  double _moveDistance;
   final int _timerRest = 100;
   GlobalKey _key = GlobalKey();
 
@@ -36,6 +36,10 @@ class ScrollingTextState extends State<ScrollingText>
   void initState() {
     super.initState();
     scrollController = ScrollController();
+    _moveDistance = widget.speed * 10;
+    if (_moveDistance < 1) {
+      _moveDistance = 2.5;
+    }
     WidgetsBinding.instance.addPostFrameCallback((callback) {
       startTimer();
     });
@@ -43,11 +47,6 @@ class ScrollingTextState extends State<ScrollingText>
 
   void startTimer() {
     if (_key.currentContext != null) {
-      double widgetWidth =
-          _key.currentContext.findRenderObject().paintBounds.size.width;
-      double widgetHeight =
-          _key.currentContext.findRenderObject().paintBounds.size.height;
-
       timer = Timer.periodic(Duration(milliseconds: _timerRest), (timer) {
         double maxScrollExtent = scrollController.position.maxScrollExtent;
         double pixels = scrollController.position.pixels;
@@ -69,32 +68,10 @@ class ScrollingTextState extends State<ScrollingText>
   }
 
   Widget getBothEndsChild() {
-    if (widget.scrollAxis == Axis.vertical) {
-      String newString = widget.text.split("").join("\n");
-      return Center(
-        child: Text(
-          newString,
-          style: widget.textStyle,
-          textAlign: TextAlign.center,
-        ),
-      );
-    }
-    return Center(
-        child: Text(
+    return Text(
           widget.text,
           style: widget.textStyle,
-        ),
     );
-  }
-
-  Widget getCenterChild() {
-    if (widget.scrollAxis == Axis.horizontal) {
-      return Container(
-          height: screenHeight * widget.ratioOfBlankToScreen,
-      );
-    } else {
-      return Container(width: screenWidth * widget.ratioOfBlankToScreen);
-    }
   }
 
   @override
@@ -107,11 +84,12 @@ class ScrollingTextState extends State<ScrollingText>
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Container(
+          padding: EdgeInsets.only(top: screenHeight * widget.top),
           child: ListView(
             key: _key,
             reverse: true,
-            scrollDirection: widget.scrollAxis,
+            scrollDirection: Axis.horizontal,
             controller: scrollController,
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[

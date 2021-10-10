@@ -13,6 +13,11 @@ class Message extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Message', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'v1'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'roomName', protoName: 'roomName')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'text')
+    ..a<$core.double>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'size', $pb.PbFieldType.OD)
+    ..a<$core.double>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'speed', $pb.PbFieldType.OD)
+    ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'colorR', $pb.PbFieldType.O3, protoName: 'colorR')
+    ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'colorG', $pb.PbFieldType.O3, protoName: 'colorG')
+    ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'colorB', $pb.PbFieldType.O3, protoName: 'colorB')
     ..hasRequiredFields = false
   ;
 
@@ -20,6 +25,11 @@ class Message extends $pb.GeneratedMessage {
   factory Message({
     $core.String? roomName,
     $core.String? text,
+    $core.double? size,
+    $core.double? speed,
+    $core.int? colorR,
+    $core.int? colorG,
+    $core.int? colorB,
   }) {
     final _result = create();
     if (roomName != null) {
@@ -27,6 +37,21 @@ class Message extends $pb.GeneratedMessage {
     }
     if (text != null) {
       _result.text = text;
+    }
+    if (size != null) {
+      _result.size = size;
+    }
+    if (speed != null) {
+      _result.speed = speed;
+    }
+    if (colorR != null) {
+      _result.colorR = colorR;
+    }
+    if (colorG != null) {
+      _result.colorG = colorG;
+    }
+    if (colorB != null) {
+      _result.colorB = colorB;
     }
     return _result;
   }
@@ -68,5 +93,50 @@ class Message extends $pb.GeneratedMessage {
   $core.bool hasText() => $_has(1);
   @$pb.TagNumber(2)
   void clearText() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.double get size => $_getN(2);
+  @$pb.TagNumber(3)
+  set size($core.double v) { $_setDouble(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasSize() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearSize() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.double get speed => $_getN(3);
+  @$pb.TagNumber(4)
+  set speed($core.double v) { $_setDouble(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasSpeed() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearSpeed() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.int get colorR => $_getIZ(4);
+  @$pb.TagNumber(5)
+  set colorR($core.int v) { $_setSignedInt32(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasColorR() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearColorR() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.int get colorG => $_getIZ(5);
+  @$pb.TagNumber(6)
+  set colorG($core.int v) { $_setSignedInt32(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasColorG() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearColorG() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.int get colorB => $_getIZ(6);
+  @$pb.TagNumber(7)
+  set colorB($core.int v) { $_setSignedInt32(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasColorB() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearColorB() => clearField(7);
 }
 
