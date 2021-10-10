@@ -83,7 +83,7 @@ class _MessagesStreamState extends State<MessagesStream> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-          stream: widget.store.listen(),
+          stream: widget.store.listen(context),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return  Center(

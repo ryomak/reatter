@@ -8,8 +8,8 @@ import 'v1/google/protobuf/wrappers.pb.dart';
 
 
 /// CHANGE TO IP ADDRESS OF YOUR SERVER IF IT IS NECESSARY
-const serverIP = "localhost";
-const serverPort = 8080;
+const serverIP = "reatter-wrk5pd3voa-an.a.run.app";
+const serverPort = 443;
 
 /// ChatService client implementation
 class ChatService {
@@ -26,7 +26,6 @@ class ChatService {
           serverIP, // Your IP here or localhost
           port: serverPort,
           options: ChannelOptions(
-            credentials: ChannelCredentials.insecure(),
             idleTimeout: Duration(seconds: 1),
           )
         );

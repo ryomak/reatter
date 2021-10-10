@@ -19,23 +19,29 @@ class RoomStore extends ChangeNotifier {
       this.roomName,
   ):chatService = ChatService(roomName: roomName);
 
-  Stream<List<ScrollingText>>listen() async*{
+  Stream<List<ScrollingText>>listen(context) async*{
+    try {
       var stream = chatService.receive();
 
-      await for(var message in stream){
+      await for (var message in stream) {
         final t = ScrollingText(
-          text:  message.text,
+          text: message.text,
           top: Random().nextDouble(),
           speed: message.speed,
           textStyle: TextStyle(
-              fontSize: 20 * message.size,
-              fontWeight: FontWeight.bold,
-              color: Color.fromRGBO(message.colorR, message.colorG, message.colorB,0),
+            fontSize: 20 * message.size,
+            fontWeight: FontWeight.bold,
+            color: Color.fromRGBO(
+                message.colorR, message.colorG, message.colorB, 1),
           ),
         );
         messages.add(t);
         yield messages;
       }
+    } catch(e) {
+        print(e);
+        Navigator.pop(context);
+    }
   }
 
   Stream<Message>listenSingle() {
@@ -47,7 +53,6 @@ class RoomStore extends ChangeNotifier {
     if (sizeSpeed < 0.3) {
       sizeSpeed = sizeSpeed + 0.5;
     }
-    print(sizeSpeed);
     final message = Message(
         roomName: roomName,
         text: inputMessageController.text,
@@ -57,8 +62,12 @@ class RoomStore extends ChangeNotifier {
         colorG: Random().nextInt(255),
         colorB: Random().nextInt(255),
     );
-    inputMessageController.clear();
-    return chatService.send(message);
+    try {
+      chatService.send(message);
+      inputMessageController.clear();
+    } catch(e) {
+      print(e);
+    }
   }
 
 }
