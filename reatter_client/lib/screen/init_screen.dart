@@ -23,7 +23,7 @@ class _InitScreenState extends State<InitScreen>
   void initState() {
     super.initState();
     controller = AnimationController(
-        duration: Duration(seconds: 1),
+        duration: Duration(seconds: 3),
         vsync: this
     );
 
@@ -66,7 +66,7 @@ class _InitScreenState extends State<InitScreen>
                   ),
                 ),
                 TypewriterAnimatedTextKit(
-                  text : ['LINE Chat'],
+                  text : ['Reatter'],
                   textStyle: TextStyle(
                     fontSize: 45.0,
                     fontWeight: FontWeight.w900,
@@ -78,7 +78,7 @@ class _InitScreenState extends State<InitScreen>
               height: 48.0,
             ),
             RoundedButton(
-                title: "AllChannel",
+                title: "All Channel",
                 color: Colors.blueAccent,
                 onPressed: () {
                   Navigator.pushNamed(
@@ -87,6 +87,9 @@ class _InitScreenState extends State<InitScreen>
                     arguments: RoomArguments("default"),
                   );
                 }
+            ),
+            Text(
+              "Private Channel"
             ),
             RoomJoinButton(),
           ],
@@ -111,7 +114,6 @@ class _RoomJoinButtonState extends State<RoomJoinButton> {
     return  Column(
         children: [
           Container(
-            decoration: kMessageContainerDecoration,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
