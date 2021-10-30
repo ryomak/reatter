@@ -9,11 +9,21 @@ import '../app_theme.dart';
 class RoomScreen extends StatefulWidget {
 
   static String id = 'chat_screen';
+
   @override
   _RoomState createState() => _RoomState();
 }
 
 class _RoomState extends State<RoomScreen> {
+
+  FocusNode addFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    addFocusNode = FocusNode();
+  }
+
   @override
   Widget build(BuildContext context) {
     final RoomArguments args = ModalRoute.of(context).settings.arguments;
@@ -22,9 +32,10 @@ class _RoomState extends State<RoomScreen> {
     }
     var store = RoomStore(args.name);
 
+
     return Scaffold(
         appBar: AppBar(
-          toolbarHeight: 100,
+          toolbarHeight: 80,
           centerTitle: false,
           //title: Text(args.name??"error"),
           title: Row(
@@ -62,13 +73,14 @@ class _RoomState extends State<RoomScreen> {
 
         ),
         backgroundColor: MyTheme.kPrimaryColor,
-        body: Column(
+        body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child:Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
                       child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           boxShadow: [
@@ -115,6 +127,13 @@ class _RoomState extends State<RoomScreen> {
                               hintText: 'Type your message ...',
                               border: InputBorder.none,
                             ),
+                            onEditingComplete: () async {
+                              if (store.inputMessageController.text.isNotEmpty) {
+                                store.sendMessage();
+                              }
+                              addFocusNode.unfocus();
+                            },
+                            focusNode: addFocusNode,
                           ),
                         ),
                         TextButton(
@@ -133,6 +152,7 @@ class _RoomState extends State<RoomScreen> {
               ),
             ],
       ),
+    ),
     );
   }
 }

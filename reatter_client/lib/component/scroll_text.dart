@@ -27,6 +27,7 @@ class ScrollingTextState extends State<ScrollingText>
   ScrollController scrollController;
   double screenWidth;
   double screenHeight;
+  double screenBottom;
   double position = 0.0;
   Timer timer;
   double _moveDistance;
@@ -65,6 +66,7 @@ class ScrollingTextState extends State<ScrollingText>
   void didChangeDependencies() {
     super.didChangeDependencies();
     screenWidth = MediaQuery.of(context).size.width;
+    screenBottom = MediaQuery.of(context).viewInsets.bottom;
     screenHeight = MediaQuery.of(context).size.height;
   }
 
@@ -86,7 +88,7 @@ class ScrollingTextState extends State<ScrollingText>
   @override
   Widget build(BuildContext context) {
     return Container(
-          padding: EdgeInsets.only(top: screenHeight * widget.top),
+          padding: EdgeInsets.only(top: screenHeight * widget.top < screenBottom? screenBottom+ 50:screenHeight * widget.top ),
           child: ListView(
             key: _key,
             reverse: true,
