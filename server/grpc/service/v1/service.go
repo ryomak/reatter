@@ -54,8 +54,10 @@ func (s *chatServiceServer) Send(ctx context.Context, message *v1.Message) (*emp
 func (s *chatServiceServer) Subscribe(roomName *wrappers.StringValue, stream v1.ChatService_SubscribeServer) error {
 	log.Print("Subscribe requested")
 	stream.Send(&v1.Message{
-		Text:     "test",
+		Text:     "こんにちは",
 		RoomName: roomName.GetValue(),
+		Size:     0.5,
+		Speed:    0.5,
 	})
 	for {
 		m := <-s.msg
@@ -86,10 +88,9 @@ func (s *chatServiceServer) Subscribe(roomName *wrappers.StringValue, stream v1.
 		}
 		if err := stream.Send(&n); err != nil {
 			// put message back to the channel
-			s.msg <- m
 			log.Printf("Stream connection failed: %v", err)
 			return err
 		}
-		log.Printf("Message sent: %+v", n)
+		log.Printf("Message sent: room=%v, text=%v", n.RoomName, n.Text)
 	}
 }

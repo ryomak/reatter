@@ -19,7 +19,13 @@ class RoomStore extends ChangeNotifier {
       this.roomName,
   ):chatService = ChatService(roomName: roomName);
 
-  Stream<List<ScrollingText>>listen(context) async*{
+  @override
+  void dispose() {
+    inputMessageController.dispose();
+    super.dispose();
+  }
+
+  Stream<List<ScrollingText>>listen(BuildContext context) async*{
     try {
       var stream = chatService.receive();
 
@@ -40,15 +46,16 @@ class RoomStore extends ChangeNotifier {
       }
     } catch(e) {
         print(e);
-        Navigator.pop(context);
+        if (context != null){
+          Navigator.pop(context);
+        }
     }
   }
 
-  Stream<Message>listenSingle() {
-    return chatService.receive();
-  }
-
   void sendMessage() {
+    if (inputMessageController.text == ""){
+      return;
+    }
     var sizeSpeed = Random().nextDouble();
     if (sizeSpeed < 0.3) {
       sizeSpeed = sizeSpeed + 0.5;

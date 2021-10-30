@@ -6,34 +6,45 @@ import 'v1/chat.pbgrpc.dart' as grpc;
 import 'v1/google/protobuf/wrappers.pb.dart';
 
 
+const prodServerIP = "reatter-wrk5pd3voa-an.a.run.app";
+const prodServerPort = 443;
 
-/// CHANGE TO IP ADDRESS OF YOUR SERVER IF IT IS NECESSARY
-const serverIP = "reatter-wrk5pd3voa-an.a.run.app";
-const serverPort = 443;
+const serverIP = "localhost";
+const serverPort = 8080;
+
+const isProd = true;
+
 
 /// ChatService client implementation
 class ChatService {
 
   String roomName;
 
-  ClientChannel client;
+
+  grpc.ChatServiceClient client;
 
   /// Constructor
   ChatService(
       { this.roomName})
       :
-        client = ClientChannel(
-          serverIP, // Your IP here or localhost
-          port: serverPort,
+        client = grpc.ChatServiceClient(isProd?ClientChannel(
+            prodServerIP, // Your IP here or localhost
+          port: prodServerPort,
           options: ChannelOptions(
-            idleTimeout: Duration(seconds: 1),
+            idleTimeout: Duration(seconds: 3),
           )
-        );
+        ):ClientChannel(
+            serverIP, // Your IP here or localhost
+            port: serverPort,
+            options: ChannelOptions(
+              credentials: ChannelCredentials.insecure(),
+              idleTimeout: Duration(seconds: 3),
+            )
+        ));
 
   /// Send message to the server
-  void send(Message message){
-    grpc.ChatServiceClient(client)
-        .send(grpc.Message(
+  void send(Message message) async{
+    await client.send(grpc.Message(
           roomName: message.roomName,
           text: message.text,
           size: message.size,
@@ -47,7 +58,7 @@ class ChatService {
   Stream<Message> receive() async* {
     var request = StringValue.create();
     request.value = roomName;
-    var stream = grpc.ChatServiceClient(client).subscribe(request);
+    var stream = client.subscribe(request);
     await for (var msg in stream) {
       yield Message(
           roomName: msg.roomName,
