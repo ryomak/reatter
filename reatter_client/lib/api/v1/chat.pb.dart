@@ -18,6 +18,7 @@ class Message extends $pb.GeneratedMessage {
     ..a<$core.int>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'colorR', $pb.PbFieldType.O3, protoName: 'colorR')
     ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'colorG', $pb.PbFieldType.O3, protoName: 'colorG')
     ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'colorB', $pb.PbFieldType.O3, protoName: 'colorB')
+    ..a<$core.double>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'top', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -30,6 +31,7 @@ class Message extends $pb.GeneratedMessage {
     $core.int? colorR,
     $core.int? colorG,
     $core.int? colorB,
+    $core.double? top,
   }) {
     final _result = create();
     if (roomName != null) {
@@ -52,6 +54,9 @@ class Message extends $pb.GeneratedMessage {
     }
     if (colorB != null) {
       _result.colorB = colorB;
+    }
+    if (top != null) {
+      _result.top = top;
     }
     return _result;
   }
@@ -138,5 +143,14 @@ class Message extends $pb.GeneratedMessage {
   $core.bool hasColorB() => $_has(6);
   @$pb.TagNumber(7)
   void clearColorB() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.double get top => $_getN(7);
+  @$pb.TagNumber(8)
+  set top($core.double v) { $_setDouble(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasTop() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearTop() => clearField(8);
 }
 

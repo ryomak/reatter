@@ -17,6 +17,7 @@ message Message{
     int32 colorR = 5;
     int32 colorG = 6;
     int32 colorB = 7;
+    double top = 8;
 }
 
 service ChatService {

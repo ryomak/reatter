@@ -12,8 +12,8 @@ class ScrollingText extends StatefulWidget {
   ScrollingText({
     @required this.text,
     this.textStyle,
-    this.top : 0.5,
-    this.speed : 1.0,
+    this.top: 0.5,
+    this.speed: 1.0,
   }) : assert(text != null);
 
   @override
@@ -25,9 +25,6 @@ class ScrollingText extends StatefulWidget {
 class ScrollingTextState extends State<ScrollingText>
     with SingleTickerProviderStateMixin {
   ScrollController scrollController;
-  double screenWidth;
-  double screenHeight;
-  double screenBottom;
   double position = 0.0;
   Timer timer;
   double _moveDistance;
@@ -65,15 +62,12 @@ class ScrollingTextState extends State<ScrollingText>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    screenWidth = MediaQuery.of(context).size.width;
-    screenBottom = MediaQuery.of(context).viewInsets.bottom;
-    screenHeight = MediaQuery.of(context).size.height;
   }
 
   Widget getBothEndsChild() {
     return Text(
-          widget.text,
-          style: widget.textStyle,
+      widget.text,
+      style: widget.textStyle,
     );
   }
 
@@ -87,18 +81,20 @@ class ScrollingTextState extends State<ScrollingText>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-          padding: EdgeInsets.only(top: screenHeight * widget.top < screenBottom? screenBottom+ 50:screenHeight * widget.top ),
-          child: ListView(
-            key: _key,
-            reverse: true,
-            scrollDirection: Axis.horizontal,
-            controller: scrollController,
-            physics: NeverScrollableScrollPhysics(),
-            children: <Widget>[
-              getBothEndsChild(),
-            ],
-          ),
+    return Positioned(
+      top: widget.top,
+      width: MediaQuery.of(context).size.width,
+      height: 30,
+      child: ListView(
+        key: _key,
+        reverse: true,
+        scrollDirection: Axis.horizontal,
+        controller: scrollController,
+        physics: NeverScrollableScrollPhysics(),
+        children: <Widget>[
+          getBothEndsChild(),
+        ],
+      ),
     );
   }
 }

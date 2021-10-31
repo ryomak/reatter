@@ -19,8 +19,9 @@ const Message$json = const {
     const {'1': 'colorR', '3': 5, '4': 1, '5': 5, '10': 'colorR'},
     const {'1': 'colorG', '3': 6, '4': 1, '5': 5, '10': 'colorG'},
     const {'1': 'colorB', '3': 7, '4': 1, '5': 5, '10': 'colorB'},
+    const {'1': 'top', '3': 8, '4': 1, '5': 1, '10': 'top'},
   ],
 };
 
 /// Descriptor for `Message`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List messageDescriptor = $convert.base64Decode('CgdNZXNzYWdlEhoKCHJvb21OYW1lGAEgASgJUghyb29tTmFtZRISCgR0ZXh0GAIgASgJUgR0ZXh0EhIKBHNpemUYAyABKAFSBHNpemUSFAoFc3BlZWQYBCABKAFSBXNwZWVkEhYKBmNvbG9yUhgFIAEoBVIGY29sb3JSEhYKBmNvbG9yRxgGIAEoBVIGY29sb3JHEhYKBmNvbG9yQhgHIAEoBVIGY29sb3JC');
+final $typed_data.Uint8List messageDescriptor = $convert.base64Decode('CgdNZXNzYWdlEhoKCHJvb21OYW1lGAEgASgJUghyb29tTmFtZRISCgR0ZXh0GAIgASgJUgR0ZXh0EhIKBHNpemUYAyABKAFSBHNpemUSFAoFc3BlZWQYBCABKAFSBXNwZWVkEhYKBmNvbG9yUhgFIAEoBVIGY29sb3JSEhYKBmNvbG9yRxgGIAEoBVIGY29sb3JHEhYKBmNvbG9yQhgHIAEoBVIGY29sb3JCEhAKA3RvcBgIIAEoAVIDdG9w');
