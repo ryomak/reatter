@@ -23,6 +23,7 @@ type Message struct {
 	ColorR   int32
 	ColorG   int32
 	ColorB   int32
+	Top      float64
 }
 
 // NewChatServiceServer creates Chat service object
@@ -42,6 +43,7 @@ func (s *chatServiceServer) Send(ctx context.Context, message *v1.Message) (*emp
 			ColorR:   message.ColorR,
 			ColorG:   message.ColorG,
 			ColorB:   message.ColorB,
+			Top:      message.Top,
 		}
 	} else {
 		log.Print("Send requested: message=<empty>")
@@ -56,14 +58,13 @@ func (s *chatServiceServer) Subscribe(roomName *wrappers.StringValue, stream v1.
 	stream.Send(&v1.Message{
 		Text:     "こんにちは",
 		RoomName: roomName.GetValue(),
-		Size:     0.5,
+		Size:     0.8,
 		Speed:    0.5,
+		Top:      0.5,
 	})
 	for {
 		m := <-s.msg
-		if roomName.GetValue() != m.RoomName {
-			continue
-		}
+
 		switch {
 		case m.Size < 0.4:
 			m.Size = m.Size + 0.5
@@ -85,6 +86,7 @@ func (s *chatServiceServer) Subscribe(roomName *wrappers.StringValue, stream v1.
 			ColorR:   m.ColorR,
 			ColorG:   m.ColorG,
 			ColorB:   m.ColorB,
+			Top:      m.Top,
 		}
 		if err := stream.Send(&n); err != nil {
 			// put message back to the channel

@@ -4,8 +4,10 @@ import (
 	"context"
 	"log"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/keepalive"
 
 	v1 "github.com/ryomak/reatter/server/api/v1"
 )
@@ -18,7 +20,11 @@ func RunServer(ctx context.Context, srv v1.ChatServiceServer, port string) error
 	}
 
 	// register service
-	server := grpc.NewServer()
+	server := grpc.NewServer(
+		grpc.KeepaliveParams(keepalive.ServerParameters{
+			MaxConnectionIdle: 3 * time.Minute,
+		}),
+	)
 	v1.RegisterChatServiceServer(server, srv)
 
 	// start gRPC server
