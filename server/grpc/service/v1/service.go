@@ -89,7 +89,7 @@ func (s *chatServiceServer) Subscribe(roomName *wrappers.StringValue, stream v1.
 		stream.Send(&v1.Message{
 			Text:     text,
 			RoomName: roomName.GetValue(),
-			Size:     0.2,
+			Size:     0.4,
 			Speed:    0.3,
 			Top:      rand.Float64(),
 		})
