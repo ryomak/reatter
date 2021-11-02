@@ -1,35 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reatter/model/room.dart';
 import 'package:reatter/screen/init_screen.dart';
 import 'package:reatter/screen/store/room_store.dart';
 
 import '../app_theme.dart';
 
-class RoomScreen extends StatefulWidget {
+class RoomScreen extends ConsumerWidget {
   static String id = 'chat_screen';
 
   @override
-  _RoomState createState() => _RoomState();
-}
-
-class _RoomState extends State<RoomScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ScopedReader watch) {
     final RoomArguments args = ModalRoute.of(context).settings.arguments;
     if (args == null || args.name == "") {
       Navigator.pushNamed(context, InitScreen.id);
     }
-    var store = RoomStore(args.name);
+    final store = watch(roomProvider);
+    if (store.roomName != args.name) {
+      store.reset();
+    }
+    store.setRoomName(args.name);
 
     return Scaffold(
       appBar: AppBar(
+        key: roomScreenKey,
         toolbarHeight: 80,
-        centerTitle: false,
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            store.reset();
+            Navigator.of(context).pop();
+          },
+        ),
         //title: Text(args.name??"error"),
         title: Row(
           children: [
@@ -92,7 +95,7 @@ class _RoomState extends State<RoomScreen> {
                       topLeft: Radius.circular(30),
                       topRight: Radius.circular(30),
                     ),
-                    child: MessagesStream(store)),
+                    child: MessagesStream()),
               ),
             ),
             Container(
@@ -121,7 +124,7 @@ class _RoomState extends State<RoomScreen> {
                       ),
                       TextButton(
                           onPressed: () {
-                            store.sendMessage();
+                            store.sendMessage(args.name);
                           },
                           child: Icon(
                             Icons.send_sharp,
@@ -138,20 +141,13 @@ class _RoomState extends State<RoomScreen> {
   }
 }
 
-class MessagesStream extends StatefulWidget {
-  RoomStore store;
-
-  MessagesStream(this.store);
-
+class MessagesStream extends ConsumerWidget {
   @override
-  _MessagesStreamState createState() => _MessagesStreamState();
-}
+  Widget build(BuildContext context, ScopedReader watch) {
+    final store = watch(roomProvider);
 
-class _MessagesStreamState extends State<MessagesStream> {
-  @override
-  Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: widget.store.listen(context),
+      stream: store.listen(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(

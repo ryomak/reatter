@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reatter/screen/init_screen.dart';
 import 'package:reatter/screen/room_screen.dart';
 
-void main() => runApp(Reatter());
+void main() => runApp(ProviderScope(child: Reatter()));
 
 class Reatter extends StatelessWidget {
   @override

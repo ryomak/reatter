@@ -22,7 +22,8 @@ func RunServer(ctx context.Context, srv v1.ChatServiceServer, port string) error
 	// register service
 	server := grpc.NewServer(
 		grpc.KeepaliveParams(keepalive.ServerParameters{
-			MaxConnectionIdle: 3 * time.Minute,
+			Time:    6 * time.Second,
+			Timeout: 3 * time.Second,
 		}),
 	)
 	v1.RegisterChatServiceServer(server, srv)

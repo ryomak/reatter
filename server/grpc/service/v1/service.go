@@ -2,17 +2,26 @@ package v1
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"math/rand"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/golang/protobuf/ptypes/wrappers"
+	"github.com/rs/xid"
 
+	"github.com/greymd/ojichat/generator"
 	v1 "github.com/ryomak/reatter/server/api/v1"
 )
 
 // chatServiceServer is implementation of v1.ChatServiceServer proto interface
 type chatServiceServer struct {
-	msg chan *Message
+	msg   chan *Message
+	rooms map[string]*Room
+}
+
+type Room struct {
+	users map[string]v1.ChatService_SubscribeServer
 }
 
 type Message struct {
@@ -26,9 +35,18 @@ type Message struct {
 	Top      float64
 }
 
+type ChatServer interface {
+	v1.ChatServiceServer
+	Control()
+}
+
 // NewChatServiceServer creates Chat service object
-func NewChatServiceServer() v1.ChatServiceServer {
-	return &chatServiceServer{msg: make(chan *Message, 1000)}
+func NewChatServiceServer() ChatServer {
+	c := &chatServiceServer{
+		msg:   make(chan *Message, 1000),
+		rooms: map[string]*Room{},
+	}
+	return c
 }
 
 // Send sends message to the server
@@ -54,17 +72,48 @@ func (s *chatServiceServer) Send(ctx context.Context, message *v1.Message) (*emp
 
 // Subscribe is streaming method to get echo messages from the server
 func (s *chatServiceServer) Subscribe(roomName *wrappers.StringValue, stream v1.ChatService_SubscribeServer) error {
+	if room := s.rooms[roomName.GetValue()]; room == nil {
+		s.rooms[roomName.GetValue()] = &Room{
+			users: map[string]v1.ChatService_SubscribeServer{},
+		}
+		s.rooms[roomName.GetValue()].users[xid.New().String()] = stream
+	} else {
+		room.users[xid.New().String()] = stream
+	}
 	log.Print("Subscribe requested")
-	stream.Send(&v1.Message{
-		Text:     "こんにちは",
-		RoomName: roomName.GetValue(),
-		Size:     0.8,
-		Speed:    0.5,
-		Top:      0.5,
-	})
+	if text, _ := generator.Start(generator.Config{
+		TargetName:       "",
+		EmojiNum:         1,
+		PunctuationLevel: 1,
+	}); text != "" {
+		stream.Send(&v1.Message{
+			Text:     text,
+			RoomName: roomName.GetValue(),
+			Size:     0.2,
+			Speed:    0.3,
+			Top:      rand.Float64(),
+		})
+	}
+
+	// block
+LOOP:
+	for {
+		stream.Context().Done()
+		select {
+		case <-stream.Context().Done():
+			break LOOP
+		}
+	}
+	return nil
+}
+
+func (s *chatServiceServer) Control() {
 	for {
 		m := <-s.msg
-
+		room := s.rooms[m.RoomName]
+		if room == nil {
+			continue
+		}
 		switch {
 		case m.Size < 0.4:
 			m.Size = m.Size + 0.5
@@ -78,7 +127,7 @@ func (s *chatServiceServer) Subscribe(roomName *wrappers.StringValue, stream v1.
 			m.Speed = 1
 		}
 
-		n := v1.Message{
+		message := v1.Message{
 			Text:     m.Text,
 			RoomName: m.RoomName,
 			Size:     m.Size,
@@ -88,11 +137,12 @@ func (s *chatServiceServer) Subscribe(roomName *wrappers.StringValue, stream v1.
 			ColorB:   m.ColorB,
 			Top:      m.Top,
 		}
-		if err := stream.Send(&n); err != nil {
-			// put message back to the channel
-			log.Printf("Stream connection failed: %v", err)
-			return err
+		for k, v := range room.users {
+			if err := v.Send(&message); err != nil {
+				fmt.Println(k, err.Error())
+				v.Context().Deadline()
+				delete(room.users, k)
+			}
 		}
-		log.Printf("Message sent: room=%v, text=%v", n.RoomName, n.Text)
 	}
 }

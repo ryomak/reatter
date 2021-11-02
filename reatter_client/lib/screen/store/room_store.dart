@@ -1,24 +1,26 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reatter/api/chat_service.dart';
 import 'package:reatter/component/scroll_text.dart';
 import 'package:reatter/model/message.dart';
-import 'package:reatter/screen/init_screen.dart';
+
+final GlobalKey roomScreenKey = GlobalKey();
+
+final roomProvider = ChangeNotifierProvider((ref) => RoomStore());
 
 class RoomStore extends ChangeNotifier {
-  String roomName;
   ChatService chatService;
-  List<ScrollingText> messages = [];
+  String _roomName;
+  List<ScrollingText> _messages = [];
   TextEditingController inputMessageController = TextEditingController();
 
   // todo
   final bottomInputHeight = 60;
   final headerHeight = 80;
 
-  RoomStore(
-    this.roomName,
-  ) : chatService = ChatService(roomName: roomName);
+  RoomStore() : chatService = ChatService();
 
   @override
   void dispose() {
@@ -26,45 +28,61 @@ class RoomStore extends ChangeNotifier {
     super.dispose();
   }
 
-  double getTop(BuildContext context, double per) {
-    if (context == null) return 150;
+  void setRoomName(String name) {
+    _roomName = name;
+  }
+
+  void reset() {
+    _messages = [];
+    _roomName = "";
+    inputMessageController.text = "";
+  }
+
+  double getTop(double per) {
+    if (roomScreenKey.currentContext == null) return 150;
     // sizeが変わって自動で位置が変更される
     //return (context.size.height - bottomInputHeight) * per;
     return per *
-            (MediaQuery.of(context).size.height -
+            (MediaQuery.of(roomScreenKey.currentContext).size.height -
                 bottomInputHeight -
                 headerHeight) +
         headerHeight;
   }
 
-  Stream<List<ScrollingText>> listen(BuildContext context) async* {
+  get messages => _messages;
+  get roomName => _roomName;
+
+  Stream<List<ScrollingText>> listen() async* {
     try {
-      var stream = chatService.receive();
+      var stream = chatService.receive(_roomName);
 
       await for (var message in stream) {
         final t = ScrollingText(
           text: message.text,
-          top: getTop(context, message.top),
+          top: getTop(message.top),
           speed: message.speed,
           textStyle: TextStyle(
-            fontSize: 20 * message.size,
+            fontSize: 23 * message.size,
             fontWeight: FontWeight.bold,
             color: Color.fromRGBO(
                 message.colorR, message.colorG, message.colorB, 1),
           ),
         );
-        messages.add(t);
-        yield messages;
+        _messages.add(t);
+        yield _messages;
       }
     } catch (e) {
       print(e);
-      if (context != null) {
-        Navigator.pushNamed(context, InitScreen.id);
+      if (roomScreenKey.currentContext != null) {
+        if (Navigator.of(roomScreenKey.currentContext).canPop()) {
+          reset();
+          Navigator.of(roomScreenKey.currentContext).pop();
+        }
       }
     }
   }
 
-  void sendMessage() {
+  void sendMessage(String roomName) {
     if (inputMessageController.text == "") {
       return;
     }

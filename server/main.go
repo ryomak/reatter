@@ -17,7 +17,11 @@ func main() {
 		log.Printf("defaulting to port %s", port)
 	}
 
-	if err := grpc.RunServer(context.Background(), v1.NewChatServiceServer(), port); err != nil {
+	serv := v1.NewChatServiceServer()
+
+	go serv.Control()
+
+	if err := grpc.RunServer(context.Background(), serv, port); err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}

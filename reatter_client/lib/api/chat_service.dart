@@ -10,16 +10,14 @@ const prodServerPort = 443;
 const serverIP = "192.168.0.6";
 const serverPort = 8080;
 
-const isProd = false;
+const isProd = true;
 
 /// ChatService client implementation
 class ChatService {
-  String roomName;
-
   grpc.ChatServiceClient client;
 
   /// Constructor
-  ChatService({this.roomName})
+  ChatService()
       : client = grpc.ChatServiceClient(isProd
             ? ClientChannel(prodServerIP, // Your IP here or localhost
                 port: prodServerPort,
@@ -30,7 +28,6 @@ class ChatService {
                 port: serverPort,
                 options: ChannelOptions(
                   credentials: ChannelCredentials.insecure(),
-                  idleTimeout: Duration(seconds: 3),
                 )));
 
   /// Send message to the server
@@ -47,10 +44,12 @@ class ChatService {
     ));
   }
 
-  Stream<Message> receive() async* {
+  Stream<Message> receive(String roomName) async* {
     var request = StringValue.create();
     request.value = roomName;
-    var stream = client.subscribe(request);
+    var stream = client.subscribe(
+      request,
+    );
     await for (var msg in stream) {
       yield Message(
         roomName: msg.roomName,
