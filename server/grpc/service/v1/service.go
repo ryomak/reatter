@@ -4,13 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"math/rand"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/rs/xid"
 
-	"github.com/greymd/ojichat/generator"
 	v1 "github.com/ryomak/reatter/server/api/v1"
 )
 
@@ -81,19 +79,6 @@ func (s *chatServiceServer) Subscribe(roomName *wrappers.StringValue, stream v1.
 		room.users[xid.New().String()] = stream
 	}
 	log.Print("Subscribe requested")
-	if text, _ := generator.Start(generator.Config{
-		TargetName:       "",
-		EmojiNum:         1,
-		PunctuationLevel: 1,
-	}); text != "" {
-		stream.Send(&v1.Message{
-			Text:     text,
-			RoomName: roomName.GetValue(),
-			Size:     0.4,
-			Speed:    0.3,
-			Top:      rand.Float64(),
-		})
-	}
 
 	// block
 LOOP:
